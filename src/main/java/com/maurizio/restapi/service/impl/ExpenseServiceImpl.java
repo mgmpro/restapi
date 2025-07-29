@@ -2,6 +2,7 @@ package com.maurizio.restapi.service.impl;
 
 import com.maurizio.restapi.dto.ExpenseDTO;
 import com.maurizio.restapi.entity.ExpenseEntity;
+import com.maurizio.restapi.exceptions.ResourceNotFoundException;
 import com.maurizio.restapi.repository.ExpenseRepository;
 import com.maurizio.restapi.service.ExpenseService;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +40,20 @@ public class ExpenseServiceImpl implements ExpenseService {
         List<ExpenseDTO> listOfExpenses = list.stream().map(expenseEntity -> mapToExpenseDTO(expenseEntity)).collect(Collectors.toList());
         //Return the list
         return listOfExpenses;
+    }
+
+    /* *
+     * It will fetch the single expense details from database
+     * @param expenseId
+     * @return ExpenseDTO
+     * */
+
+    @Override
+    public ExpenseDTO getExpenseByExpenseId(String expenseId) {
+        ExpenseEntity expenseEntity = expenseRepository.findByExpenseId(expenseId)
+        .orElseThrow(() -> new ResourceNotFoundException("Expense not found for the expense id "+expenseId));
+        log.info("Printing the expense entity details {}", expenseEntity);
+        return mapToExpenseDTO(expenseEntity);
     }
 
     /**
